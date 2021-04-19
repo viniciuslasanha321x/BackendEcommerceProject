@@ -10,6 +10,10 @@ class UsersRepository implements IUsersRepository {
     this.ormRepository = getRepository(User);
   }
 
+  async findById(id: string): Promise<User | undefined> {
+    return this.ormRepository.findOne({ id });
+  }
+
   async save(user: User): Promise<User> {
     return this.ormRepository.save(user);
   }

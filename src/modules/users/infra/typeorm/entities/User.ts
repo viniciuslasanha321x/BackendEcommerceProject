@@ -36,7 +36,7 @@ class User {
   getUrl(): string | null {
     if (!this.avatar) return null;
 
-    return `https:localhost:3333/files/${this.avatar}`;
+    return `http://localhost:3333/files/${this.avatar}`;
   }
 
   constructor() {
