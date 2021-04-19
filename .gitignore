@@ -1,0 +1,9 @@
+/node_modules
+/dist
+/coverage
+/.vscode
+
+.env
+ormconfig.json
+tmp/upload/*
+!tmp/upload/.gitkeep
