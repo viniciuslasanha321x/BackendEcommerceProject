@@ -1,4 +1,4 @@
-import Category from '../infra/typeorm/entities/Category';
+import Category from '@modules/categories/infra/typeorm/entities/Category';
 
 export default interface ICreateProductDTO {
   title: string;

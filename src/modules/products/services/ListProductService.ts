@@ -1,34 +1,39 @@
-import AppError from '@shared/error/AppError';
 import { inject, injectable } from 'tsyringe';
-import Product from '../infra/typeorm/entities/Product';
+
+import AppError from '@shared/error/AppError';
+import IResponseProductDTO from '../dtos/IResponseProductDTO';
 import IProductRepository from '../repositories/IProductsRepository';
 
 interface IRequest {
-  category?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
 }
 
 @injectable()
-class ListProductCategoryService {
+class ListProductService {
   constructor(
     @inject('ProductRepository')
     private productRepository: IProductRepository
   ) {}
 
-  async execute({ category }: IRequest): Promise<Product[]> {
-    let products = await this.productRepository.findAll();
+  async execute({
+    search,
+    page,
+    limit,
+  }: IRequest): Promise<IResponseProductDTO | undefined> {
+    const products = await this.productRepository.findAll({
+      search,
+      page,
+      limit,
+    });
 
     if (!products) {
       throw new AppError('Product does not exist');
-    }
-
-    if (category) {
-      products = products.filter((product) =>
-        product.categories.filter((cat) => cat.title === category)
-      );
     }
 
     return products;
   }
 }
 
-export default ListProductCategoryService;
+export default ListProductService;

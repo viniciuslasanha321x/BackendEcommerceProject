@@ -1,27 +1,33 @@
+import ICategoryRepository from '@modules/categories/repositories/ICategoryRepository';
 import AppError from '@shared/error/AppError';
 import { inject, injectable } from 'tsyringe';
 import Product from '../infra/typeorm/entities/Product';
-import IProductRepository from '../repositories/IProductsRepository';
 
 interface IRequest {
-  categories?: string;
+  cat_name: string;
 }
 
 @injectable()
 class ListProductCategoryService {
   constructor(
-    @inject('ProductRepository')
-    private productRepository: IProductRepository
+    @inject('CategoryRepository')
+    private categoryRepository: ICategoryRepository
   ) {}
 
-  async execute({ categories }: IRequest): Promise<Product[]> {
-    const productsList = await this.productRepository.findAll();
+  async execute({ cat_name }: IRequest): Promise<Product[]> {
+    const findCategory = await this.categoryRepository.findByName(cat_name);
 
-    if (!productsList) {
+    if (!findCategory) {
+      throw new AppError('Category does not exist');
+    }
+
+    const { products } = findCategory;
+
+    if (!products) {
       throw new AppError('Product does not exist');
     }
 
-    return productsList;
+    return products;
   }
 }
 

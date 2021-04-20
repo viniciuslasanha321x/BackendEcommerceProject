@@ -10,9 +10,9 @@ import {
 
 import { v4 as uuid } from 'uuid';
 
-import Category from './Category';
+import Category from '@modules/categories/infra/typeorm/entities/Category';
 
-@Entity('product')
+@Entity('products')
 class Product {
   @PrimaryColumn('uuid')
   readonly id: string;
@@ -32,16 +32,13 @@ class Product {
   @Column()
   stock: string;
 
-  @Column()
-  link: string;
-
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToMany(() => Category, (category) => category.product)
+  @ManyToMany(() => Category, (category) => category.products)
   @JoinTable({
     name: 'products_categories',
     joinColumns: [{ name: 'product_id' }],

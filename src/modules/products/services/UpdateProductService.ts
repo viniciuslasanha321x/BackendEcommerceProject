@@ -7,6 +7,7 @@ import IProductRepository from '../repositories/IProductsRepository';
 
 interface IRequest {
   user_id: string;
+  product_id: string;
   title: string;
   price: number;
   description: string;
@@ -17,7 +18,7 @@ interface IRequest {
 }
 
 @injectable()
-class CreateProductService {
+class UpdateProductService {
   constructor(
     @inject('ProductRepository')
     private productRepository: IProductRepository,
@@ -30,6 +31,7 @@ class CreateProductService {
   ) {}
 
   async execute({
+    product_id,
     user_id,
     title,
     price,
@@ -44,13 +46,19 @@ class CreateProductService {
       throw new AppError('User does not have permission', 401);
     }
 
+    const product = await this.productRepository.findById(product_id);
+
+    if (!product) {
+      throw new AppError('Product does not exist');
+    }
+
     const categoriesFind = await this.categoryRepository.findAll(categories);
 
     if (!categoriesFind || categoriesFind.length < 1) {
       throw new AppError('Category does not exist');
     }
 
-    const product = await this.productRepository.create({
+    Object.assign(product, {
       title,
       price,
       description,
@@ -59,8 +67,8 @@ class CreateProductService {
       categories: categoriesFind,
     });
 
-    return product;
+    return this.productRepository.save(product);
   }
 }
 
-export default CreateProductService;
+export default UpdateProductService;
