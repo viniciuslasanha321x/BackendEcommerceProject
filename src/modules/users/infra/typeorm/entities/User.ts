@@ -26,6 +26,9 @@ class User {
   @Column({ nullable: true })
   avatar: string;
 
+  @Column()
+  admin: string;
+
   @CreateDateColumn()
   created_at: Date;
 
