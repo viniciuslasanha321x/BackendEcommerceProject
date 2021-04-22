@@ -23,7 +23,6 @@ class CategoryRepository implements ICategoryRepository {
   async findById(id: string): Promise<Category | undefined> {
     return this.ormRepository.findOne({
       where: { id },
-      relations: ['products', 'products.categories'],
     });
   }
 
@@ -42,7 +41,7 @@ class CategoryRepository implements ICategoryRepository {
       where: {
         title: name,
       },
-      relations: ['products', 'products.categories'],
+      relations: ['products', 'products.categories', 'products.images'],
     });
   }
 
