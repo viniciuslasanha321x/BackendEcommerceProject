@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import AppError from '@shared/error/AppError';
+import { classToClass } from 'class-transformer';
 import IResponseProductDTO from '../dtos/IResponseProductDTO';
 import IProductRepository from '../repositories/IProductsRepository';
 
@@ -32,7 +33,7 @@ class ListProductService {
       throw new AppError('Product does not exist');
     }
 
-    return products;
+    return classToClass(products);
   }
 }
 

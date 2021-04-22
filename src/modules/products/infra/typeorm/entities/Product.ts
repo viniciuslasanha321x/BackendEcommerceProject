@@ -11,6 +11,7 @@ import {
 import { v4 as uuid } from 'uuid';
 
 import Category from '@modules/categories/infra/typeorm/entities/Category';
+import Image from './Images';
 
 @Entity('products')
 class Product {
@@ -45,6 +46,14 @@ class Product {
     inverseJoinColumns: [{ name: 'category_id' }],
   })
   categories: Category[];
+
+  @ManyToMany(() => Image, (image) => image.products)
+  @JoinTable({
+    name: 'products_images',
+    joinColumns: [{ name: 'product_id' }],
+    inverseJoinColumns: [{ name: 'image_id' }],
+  })
+  images: Image[];
 
   constructor() {
     if (!this.id) {

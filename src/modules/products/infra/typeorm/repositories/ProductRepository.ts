@@ -24,19 +24,19 @@ class ProductRepository implements IProductRepository {
   async findById(id: string): Promise<Product | undefined> {
     return this.ormRepository.findOne({
       where: { id },
-      relations: ['categories'],
+      relations: ['categories', 'images'],
     });
   }
 
   async findAll({
-    search = '',
+    search,
     page = 1,
     limit = 8,
   }: IFindAllProductDTO): Promise<IResponseProductDTO | undefined> {
     const products = await this.ormRepository.findAndCount({
-      relations: ['categories'],
+      relations: ['categories', 'images'],
       where: {
-        title: ILike(`%${search}%`),
+        ...(search ? { title: ILike(`%${search}%`) } : {}),
       },
       order: {
         updated_at: 'DESC',

@@ -1,5 +1,6 @@
 import ICategoryRepository from '@modules/categories/repositories/ICategoryRepository';
 import AppError from '@shared/error/AppError';
+import { classToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
 import Product from '../infra/typeorm/entities/Product';
 
@@ -27,7 +28,7 @@ class ListProductCategoryService {
       throw new AppError('Product does not exist');
     }
 
-    return products;
+    return classToClass(products);
   }
 }
 

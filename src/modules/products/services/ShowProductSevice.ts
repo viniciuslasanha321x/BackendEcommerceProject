@@ -1,4 +1,5 @@
 import AppError from '@shared/error/AppError';
+import { classToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
 import Product from '../infra/typeorm/entities/Product';
 import IProductRepository from '../repositories/IProductsRepository';
@@ -21,7 +22,7 @@ class showProductService {
       throw new AppError('Product does not exist');
     }
 
-    return product;
+    return classToClass(product);
   }
 }
 
