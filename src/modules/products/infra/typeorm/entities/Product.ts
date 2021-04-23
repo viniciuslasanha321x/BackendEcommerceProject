@@ -31,7 +31,7 @@ class Product {
   color: string;
 
   @Column()
-  stock: string;
+  stock: number;
 
   @CreateDateColumn()
   created_at: Date;

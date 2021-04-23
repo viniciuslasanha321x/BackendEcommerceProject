@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Exclude, Expose } from 'class-transformer';
 import { v4 as uuid } from 'uuid';
+
+import Order from '@modules/order/infra/typeorm/entities/Order';
 
 @Entity('users')
 class User {
@@ -34,6 +37,9 @@ class User {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Order, (order) => order.user)
+  order: Order[];
 
   @Expose({ name: 'url' })
   getUrl(): string | null {

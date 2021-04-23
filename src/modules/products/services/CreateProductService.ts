@@ -10,7 +10,7 @@ interface IRequest {
   title: string;
   price: number;
   description: string;
-  stock: string;
+  stock: number;
   link: string;
   categories: Array<string>;
   color: string;

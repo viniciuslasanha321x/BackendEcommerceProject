@@ -17,7 +17,7 @@ export default class CreateProducts1618842600440 implements MigrationInterface {
           },
           {
             name: 'price',
-            type: 'decimal(5,0)',
+            type: 'decimal(10,2)',
           },
           {
             name: 'description',
@@ -29,7 +29,7 @@ export default class CreateProducts1618842600440 implements MigrationInterface {
           },
           {
             name: 'stock',
-            type: 'varchar',
+            type: 'numeric',
           },
           {
             name: 'link',
