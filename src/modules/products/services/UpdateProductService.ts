@@ -11,10 +11,10 @@ interface IRequest {
   title: string;
   price: number;
   description: string;
-  stock: string;
-  link: string;
+  stock: number;
   categories: Array<string>;
   color: string;
+  status: boolean;
 }
 
 @injectable()
@@ -39,6 +39,7 @@ class UpdateProductService {
     stock,
     categories,
     color,
+    status,
   }: IRequest): Promise<Product> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -46,7 +47,10 @@ class UpdateProductService {
       throw new AppError('User does not have permission', 401);
     }
 
-    const product = await this.productRepository.findById(product_id);
+    const product = await this.productRepository.findById({
+      product_id,
+      admin: user.admin,
+    });
 
     if (!product) {
       throw new AppError('Product does not exist');
@@ -65,6 +69,7 @@ class UpdateProductService {
       stock,
       color,
       categories: categoriesFind,
+      status,
     });
 
     return this.productRepository.save(product);

@@ -7,4 +7,5 @@ export default interface ICreateProductDTO {
   color: string;
   stock: number;
   categories: Category[];
+  status: boolean;
 }

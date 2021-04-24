@@ -7,23 +7,25 @@ import ListProductService from '@modules/products/services/ListProductService';
 import UpdateProductService from '@modules/products/services/UpdateProductService';
 import DeleteProductService from '@modules/products/services/DeleteProductService';
 
-class ProductsController {
+class ProductsAdminController {
   async show(request: Request, response: Response): Promise<Response> {
     const { product_id } = request.body;
+    const user_id = request.user.id;
 
     const showProduct = container.resolve(showProductService);
 
-    const user = await showProduct.execute({ product_id });
+    const user = await showProduct.execute({ product_id, user_id });
 
     return response.json(user);
   }
 
   async index(request: Request, response: Response): Promise<Response> {
     const { search, page, limit } = request.body;
+    const user_id = request.user.id;
 
     const listProduct = container.resolve(ListProductService);
 
-    const user = await listProduct.execute({ search, page, limit });
+    const user = await listProduct.execute({ search, page, limit, user_id });
 
     return response.json(user);
   }
@@ -36,7 +38,7 @@ class ProductsController {
       categories,
       color,
       stock,
-      link,
+      status,
     } = request.body;
     const user_id = request.user.id;
 
@@ -50,7 +52,7 @@ class ProductsController {
       categories,
       color,
       stock,
-      link,
+      status,
     });
 
     return response.status(201).json(user);
@@ -64,7 +66,7 @@ class ProductsController {
       categories,
       color,
       stock,
-      link,
+      status,
     } = request.body;
     const { product_id } = request.params;
     const user_id = request.user.id;
@@ -80,7 +82,7 @@ class ProductsController {
       categories,
       color,
       stock,
-      link,
+      status,
     });
 
     return response.status(201).json(user);
@@ -101,4 +103,4 @@ class ProductsController {
   }
 }
 
-export default ProductsController;
+export default ProductsAdminController;

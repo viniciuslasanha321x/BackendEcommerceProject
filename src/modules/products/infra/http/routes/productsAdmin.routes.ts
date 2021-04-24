@@ -2,17 +2,18 @@ import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
-import ProductsController from '../controllers/ProductsController';
-import ProductsCategoryController from '../controllers/ProductsCategoryController';
+import CategoryProductsController from '@modules/categories/infra/http/controllers/CategoryProductsController';
+import ProductsAdminController from '../controllers/ProductsAdminController';
 
-const productsRouter = Router();
+const productsAdminRouter = Router();
 
-const productController = new ProductsController();
-const productsCategoryController = new ProductsCategoryController();
+const productAdminController = new ProductsAdminController();
+const categoryProductsController = new CategoryProductsController();
 
-productsRouter.post(
+productsAdminRouter.use(ensureAuthenticated);
+
+productsAdminRouter.post(
   '/',
-  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       title: Joi.string().min(4).required(),
@@ -20,15 +21,15 @@ productsRouter.post(
       description: Joi.string().min(20).required(),
       color: Joi.string().min(3).required(),
       stock: Joi.number().min(1).required(),
+      status: Joi.boolean().default(false),
       categories: Joi.array().items(Joi.string()).required(),
     },
   }),
-  productController.create
+  productAdminController.create
 );
 
-productsRouter.put(
+productsAdminRouter.put(
   '/:product_id',
-  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       title: Joi.string().min(4).required(),
@@ -36,27 +37,27 @@ productsRouter.put(
       description: Joi.string().min(20).required(),
       color: Joi.string().min(3).required(),
       stock: Joi.number().min(1).required(),
+      status: Joi.boolean().default(false),
       categories: Joi.array().items(Joi.string()).required(),
     },
     [Segments.PARAMS]: {
       product_id: Joi.string().uuid().required(),
     },
   }),
-  productController.update
+  productAdminController.update
 );
 
-productsRouter.delete(
+productsAdminRouter.delete(
   '/',
-  ensureAuthenticated,
   celebrate({
     [Segments.BODY]: {
       product_id: Joi.string().uuid().required(),
     },
   }),
-  productController.delete
+  productAdminController.delete
 );
 
-productsRouter.get(
+productsAdminRouter.get(
   '/',
   celebrate({
     [Segments.QUERY]: {
@@ -66,27 +67,27 @@ productsRouter.get(
       limit: Joi.number(),
     },
   }),
-  productController.index
+  productAdminController.index
 );
 
-productsRouter.get(
+productsAdminRouter.get(
   '/category',
   celebrate({
     [Segments.BODY]: {
       cat_name: Joi.string().required(),
     },
   }),
-  productsCategoryController.index
+  categoryProductsController.index
 );
 
-productsRouter.get(
+productsAdminRouter.get(
   '/show',
   celebrate({
     [Segments.BODY]: {
       product_id: Joi.string().uuid().required(),
     },
   }),
-  productController.show
+  productAdminController.show
 );
 
-export default productsRouter;
+export default productsAdminRouter;

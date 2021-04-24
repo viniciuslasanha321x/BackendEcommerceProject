@@ -31,6 +31,9 @@ class Product {
   color: string;
 
   @Column()
+  status: boolean;
+
+  @Column()
   stock: number;
 
   @CreateDateColumn()

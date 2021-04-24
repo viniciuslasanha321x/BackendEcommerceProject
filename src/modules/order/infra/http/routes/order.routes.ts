@@ -9,5 +9,7 @@ const orderController = new OrderController();
 orderRouter.use(ensureAuthenticated);
 
 orderRouter.post('/', orderController.create);
+orderRouter.delete('/', orderController.delete);
+orderRouter.get('/show', orderController.show);
 
 export default orderRouter;

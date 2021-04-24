@@ -1,7 +1,8 @@
+import { inject, injectable } from 'tsyringe';
+
 import IProductRepository from '@modules/products/repositories/IProductsRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/error/AppError';
-import { inject, injectable } from 'tsyringe';
 import Order from '../infra/typeorm/entities/Order';
 import IOrderProductRepository from '../repositories/IOrderProductRepository';
 import IOrderRepository from '../repositories/IOrderRepository';
@@ -42,7 +43,7 @@ class AddOrderProductService {
 
     const order = await this.orderRepository.findByUserId(user_id);
 
-    const verifyStock = (qtd: number, stock: number): void => {
+    const stockVerify = (qtd: number, stock: number): void => {
       if (qtd >= stock) {
         throw new AppError('Stock does not disponible');
       }
@@ -54,11 +55,11 @@ class AddOrderProductService {
       );
 
       if (orderItem) {
-        verifyStock(Number(orderItem.qtd), product.stock);
+        stockVerify(Number(orderItem.qtd), product.stock);
         orderItem.qtd = Number(orderItem.qtd) + 1;
         orderItem = await this.orderProductRepository.save(orderItem);
       } else {
-        verifyStock(1, product.stock);
+        stockVerify(1, product.stock);
         orderItem = await this.orderProductRepository.create({
           order_id: order.id,
           product_id: product.id,
@@ -80,7 +81,7 @@ class AddOrderProductService {
       return this.orderRepository.save(order);
     }
 
-    verifyStock(1, product.stock);
+    stockVerify(1, product.stock);
 
     const newOrder = await this.orderRepository.create({ user_id });
 

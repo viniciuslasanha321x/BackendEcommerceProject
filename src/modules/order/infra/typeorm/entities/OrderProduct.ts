@@ -35,6 +35,9 @@ class OrderProduct {
   price: number;
 
   @Column()
+  color: string;
+
+  @Column()
   qtd: number;
 
   @CreateDateColumn()

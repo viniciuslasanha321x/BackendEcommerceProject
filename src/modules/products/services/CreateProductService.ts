@@ -11,9 +11,9 @@ interface IRequest {
   price: number;
   description: string;
   stock: number;
-  link: string;
   categories: Array<string>;
   color: string;
+  status: boolean;
 }
 
 @injectable()
@@ -37,6 +37,7 @@ class CreateProductService {
     stock,
     categories,
     color,
+    status,
   }: IRequest): Promise<Product> {
     const user = await this.usersRepository.findById(user_id);
 
@@ -57,6 +58,7 @@ class CreateProductService {
       stock,
       color,
       categories: categoriesFind,
+      status,
     });
 
     return product;

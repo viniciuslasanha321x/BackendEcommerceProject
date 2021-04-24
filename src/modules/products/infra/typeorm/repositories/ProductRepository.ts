@@ -1,4 +1,5 @@
 import ICreateProductsDTO from '@modules/products/dtos/ICreateProductsDTO';
+import IFindProductDTO from '@modules/products/dtos/IFindProductDTO';
 import IFindAllProductDTO from '@modules/products/dtos/IFindAllProductDTO';
 import IResponseProductDTO from '@modules/products/dtos/IResponseProductDTO';
 import IProductRepository from '@modules/products/repositories/IProductsRepository';
@@ -21,10 +22,13 @@ class ProductRepository implements IProductRepository {
     return this.ormRepository.save(product);
   }
 
-  async findById(id: string): Promise<Product | undefined> {
+  async findById({
+    product_id,
+    admin,
+  }: IFindProductDTO): Promise<Product | undefined> {
     return this.ormRepository.findOne({
-      where: { id },
       relations: ['categories', 'images'],
+      where: { id: product_id, ...(!admin ? { status: true } : {}) },
     });
   }
 
@@ -32,11 +36,13 @@ class ProductRepository implements IProductRepository {
     search,
     page = 1,
     limit = 8,
+    admin = false,
   }: IFindAllProductDTO): Promise<IResponseProductDTO | undefined> {
     const products = await this.ormRepository.findAndCount({
       relations: ['categories', 'images'],
       where: {
         ...(search ? { title: ILike(`%${search}%`) } : {}),
+        ...(!admin ? { status: true } : {}),
       },
       order: {
         updated_at: 'DESC',

@@ -1,6 +1,7 @@
 import ICreateProductsDTO from '@modules/products/dtos/ICreateProductsDTO';
 import ICategoryRepository from '@modules/categories/repositories/ICategoryRepository';
 import { getRepository, In, Repository } from 'typeorm';
+import IFindProductCategoryDTO from '@modules/categories/dtos/IFindProductCategory';
 import Category from '../entities/Category';
 
 class CategoryRepository implements ICategoryRepository {
@@ -36,13 +37,24 @@ class CategoryRepository implements ICategoryRepository {
     });
   }
 
-  async findByName(name: string): Promise<Category | undefined> {
-    return this.ormRepository.findOne({
-      where: {
+  async findByName({
+    name,
+    admin,
+  }: IFindProductCategoryDTO): Promise<Category | undefined> {
+    let query = this.ormRepository
+      .createQueryBuilder('categories')
+      .innerJoinAndSelect('categories.products', 'products')
+      .leftJoinAndSelect('products.images', 'images')
+      .leftJoinAndSelect('products.categories', 'cate')
+      .where({
         title: name,
-      },
-      relations: ['products', 'products.categories', 'products.images'],
-    });
+      });
+
+    if (!admin) {
+      query = query.andWhere('products.status = true');
+    }
+
+    return query.getOne();
   }
 
   async remove(category: Category): Promise<void> {

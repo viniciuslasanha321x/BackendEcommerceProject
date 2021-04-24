@@ -4,4 +4,6 @@ import OrderProduct from '../infra/typeorm/entities/OrderProduct';
 export default interface IOrderProductRepository {
   create(data: ICreateOrderProductDTO): Promise<OrderProduct>;
   save(orderProduct: OrderProduct): Promise<OrderProduct>;
+  findAll(): Promise<OrderProduct[]>;
+  remove(orderProduct: OrderProduct): Promise<void>;
 }
