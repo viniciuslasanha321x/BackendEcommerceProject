@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 
-import AddOrderProductService from '@modules/order/services/AddOrderProductService';
-import RemoveOrderProductService from '@modules/order/services/RemoveOrderProductService';
+import IncrementOrderProductService from '@modules/order/services/IncrementOrderProductService';
+import DecrementOrderProductService from '@modules/order/services/DecrementOrderProductService';
 import ShowOrderService from '@modules/order/services/ShowOrderService';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 class OrderController {
   async show(request: Request, response: Response): Promise<Response> {
@@ -18,32 +19,36 @@ class OrderController {
     return response.json(order);
   }
 
-  async create(request: Request, response: Response): Promise<Response> {
-    const { product_id } = request.body;
+  async increment(request: Request, response: Response): Promise<Response> {
+    const { variant_id } = request.body;
     const user_id = request.user.id;
 
-    const addOrderProduct = container.resolve(AddOrderProductService);
+    const incrementOrderProduct = container.resolve(
+      IncrementOrderProductService
+    );
 
-    const order = await addOrderProduct.execute({
+    const order = await incrementOrderProduct.execute({
       user_id,
-      product_id,
+      variant_id,
     });
 
     return response.json(order);
   }
 
-  async delete(request: Request, response: Response): Promise<Response> {
-    const { product_id } = request.body;
+  async decrement(request: Request, response: Response): Promise<Response> {
+    const { variant_id } = request.body;
     const user_id = request.user.id;
 
-    const removeOrderProduct = container.resolve(RemoveOrderProductService);
+    const decrementOrderProduct = container.resolve(
+      DecrementOrderProductService
+    );
 
-    const order = await removeOrderProduct.execute({
+    const order = await decrementOrderProduct.execute({
       user_id,
-      product_id,
+      variant_id,
     });
 
-    return response.json(order);
+    return response.json(classToClass(order));
   }
 }
 

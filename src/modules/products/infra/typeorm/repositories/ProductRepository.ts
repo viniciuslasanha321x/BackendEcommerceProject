@@ -1,8 +1,9 @@
-import ICreateProductsDTO from '@modules/products/dtos/ICreateProductsDTO';
+import ICreateProductDTO from '@modules/products/dtos/ICreateProductDTO';
 import IFindAllProductsDTO from '@modules/products/dtos/IFindAllProductsDTO';
 import IFindProductDTO from '@modules/products/dtos/IFindProductDTO';
+import IFindProductVariantDTO from '@modules/products/dtos/IFindProductVariantDTO';
 import IResponseProductDTO from '@modules/products/dtos/IResponseProductDTO';
-import IProductRepository from '@modules/products/repositories/IProductsRepository';
+import IProductRepository from '@modules/products/repositories/IProductRepository';
 import { getRepository, ILike, Repository } from 'typeorm';
 import Product from '../entities/Product';
 
@@ -17,9 +18,27 @@ class ProductRepository implements IProductRepository {
     return this.ormRepository.save(product);
   }
 
-  async create(productData: ICreateProductsDTO): Promise<Product> {
+  async create(productData: ICreateProductDTO): Promise<Product> {
     const product = this.ormRepository.create(productData);
     return this.ormRepository.save(product);
+  }
+
+  async findByVariantId({
+    variant_id,
+    admin,
+  }: IFindProductVariantDTO): Promise<Product | undefined> {
+    let query = this.ormRepository
+      .createQueryBuilder('product')
+      .innerJoinAndSelect('product.variants', 'variants')
+      .andWhere('variants.id = :variantId', { variantId: variant_id });
+
+    if (!admin) {
+      query = query.where({
+        status: true,
+      });
+    }
+
+    return query.getOne();
   }
 
   async findById({
@@ -27,7 +46,7 @@ class ProductRepository implements IProductRepository {
     admin,
   }: IFindProductDTO): Promise<Product | undefined> {
     return this.ormRepository.findOne({
-      relations: ['categories', 'images'],
+      relations: ['categories', 'variants'],
       where: { id: product_id, ...(!admin ? { status: true } : {}) },
     });
   }
@@ -46,7 +65,7 @@ class ProductRepository implements IProductRepository {
     let query = this.ormRepository
       .createQueryBuilder('products')
       .leftJoinAndSelect('products.categories', 'categories')
-      .leftJoinAndSelect('products.images', 'images')
+      .leftJoinAndSelect('products.variants', 'variants')
       .where({
         title: ILike(`%${search}%`),
         ...(!admin ? { status: true } : {}),

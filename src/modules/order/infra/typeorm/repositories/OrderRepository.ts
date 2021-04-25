@@ -12,8 +12,8 @@ class OrderRepository implements IOrderRepository {
 
   findByUserId(user_id: string): Promise<Order | undefined> {
     return this.ormRepository.findOne({
-      relations: ['items', 'items.product', 'items.product.images'],
-      where: { user_id, status: 'PENDING' },
+      relations: ['items', 'items.variant'],
+      where: { user_id, status: null },
     });
   }
 

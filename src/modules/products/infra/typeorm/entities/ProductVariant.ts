@@ -2,25 +2,30 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-import { Exclude, Expose } from 'class-transformer';
 import Product from './Product';
 
-@Entity('images')
-class Image {
+@Entity('products_variants')
+class ProductVariant {
   @PrimaryColumn('uuid')
   readonly id: string;
 
-  @Column()
-  filename: string;
+  @Column('uuid')
+  product_id: string;
 
-  @ManyToMany(() => Product, (product) => product.images)
-  @Exclude()
-  products: Product[];
+  @Column()
+  stock: number;
+
+  @Column()
+  color: string;
+
+  @Column({ nullable: true })
+  image: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -28,10 +33,9 @@ class Image {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Expose({ name: 'url' })
-  getUrl(): string | null {
-    return `http://localhost:3333/files/${this.filename}`;
-  }
+  @ManyToOne(() => Product, (product) => product.variants)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
   constructor() {
     if (!this.id) {
@@ -40,4 +44,4 @@ class Image {
   }
 }
 
-export default Image;
+export default ProductVariant;

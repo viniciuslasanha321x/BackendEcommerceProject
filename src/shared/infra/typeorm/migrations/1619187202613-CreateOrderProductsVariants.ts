@@ -1,10 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateOrder1619187183928 implements MigrationInterface {
+export default class CreateOrderProductsVariants1619187202613
+  implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'order',
+        name: 'order_products_variants',
         columns: [
           {
             name: 'id',
@@ -12,20 +13,20 @@ export default class CreateOrder1619187183928 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'user_id',
+            name: 'order_id',
             type: 'uuid',
-            isNullable: true,
           },
           {
-            name: 'status',
-            type: 'varchar(15)',
-            isNullable: true,
+            name: 'variant_id',
+            type: 'uuid',
           },
           {
-            name: 'total',
+            name: 'price',
             type: 'decimal(10,2)',
-            isNullable: true,
-            default: 0,
+          },
+          {
+            name: 'qtd',
+            type: 'numeric',
           },
           {
             name: 'created_at',
@@ -40,20 +41,20 @@ export default class CreateOrder1619187183928 implements MigrationInterface {
         ],
         foreignKeys: [
           {
-            name: 'fk_user_order',
-            referencedTableName: 'users',
-            columnNames: ['user_id'],
+            name: 'fk_order',
+            columnNames: ['order_id'],
+            referencedTableName: 'order',
             referencedColumnNames: ['id'],
-            onDelete: 'SET NULL',
             onUpdate: 'CASCADE',
+            onDelete: 'CASCADE',
           },
           {
-            name: 'fk_order_status',
-            referencedTableName: 'order_status',
-            columnNames: ['status'],
-            referencedColumnNames: ['status'],
-            onDelete: 'CASCADE',
+            name: 'fk_variant',
+            columnNames: ['variant_id'],
+            referencedTableName: 'products_variants',
+            referencedColumnNames: ['id'],
             onUpdate: 'CASCADE',
+            onDelete: 'SET NULL',
           },
         ],
       })
@@ -61,6 +62,6 @@ export default class CreateOrder1619187183928 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('order');
+    await queryRunner.dropTable('order_products_variants');
   }
 }

@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateOrderProduct1619187202613
+export default class CreateTableProductsVariants1619350019188
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'order_product',
+        name: 'products_variants',
         columns: [
           {
             name: 'id',
@@ -13,21 +13,21 @@ export default class CreateOrderProduct1619187202613
             isPrimary: true,
           },
           {
-            name: 'order_id',
-            type: 'uuid',
-          },
-          {
             name: 'product_id',
             type: 'uuid',
-            isNullable: true,
           },
           {
-            name: 'price',
-            type: 'decimal(10,2)',
+            name: 'color',
+            type: 'varchar',
           },
           {
-            name: 'qtd',
+            name: 'stock',
             type: 'numeric',
+          },
+          {
+            name: 'image',
+            type: 'varchar',
+            isNullable: true,
           },
           {
             name: 'created_at',
@@ -42,20 +42,12 @@ export default class CreateOrderProduct1619187202613
         ],
         foreignKeys: [
           {
-            name: 'fk_order_product',
-            columnNames: ['order_id'],
-            referencedTableName: 'order',
-            referencedColumnNames: ['id'],
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE',
-          },
-          {
-            name: 'fk_product_order',
+            name: 'fk_products_variants',
             columnNames: ['product_id'],
             referencedTableName: 'products',
             referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
-            onDelete: 'SET NULL',
           },
         ],
       })
@@ -63,6 +55,6 @@ export default class CreateOrderProduct1619187202613
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('order_product');
+    await queryRunner.dropTable('products_variants');
   }
 }

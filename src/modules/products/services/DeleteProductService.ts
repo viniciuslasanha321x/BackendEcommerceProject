@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/error/AppError';
-import IProductRepository from '../repositories/IProductsRepository';
+import IProductRepository from '../repositories/IProductRepository';
 
 interface IRequest {
   user_id: string;
@@ -26,7 +26,10 @@ class DeleteProductService {
       throw new AppError('User does not have permission', 401);
     }
 
-    const product = await this.productRepository.findById(product_id);
+    const product = await this.productRepository.findById({
+      product_id,
+      admin: user.admin,
+    });
 
     if (!product) {
       throw new AppError('Product does not exist');

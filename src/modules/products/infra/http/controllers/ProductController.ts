@@ -7,7 +7,7 @@ import ListProductService from '@modules/products/services/ListProductService';
 import UpdateProductService from '@modules/products/services/UpdateProductService';
 import DeleteProductService from '@modules/products/services/DeleteProductService';
 
-class ProductsAdminController {
+class ProductAdminController {
   async show(request: Request, response: Response): Promise<Response> {
     const { product_id } = request.body;
     const user_id = request.user ? request.user.id : undefined;
@@ -37,15 +37,7 @@ class ProductsAdminController {
   }
 
   async create(request: Request, response: Response): Promise<Response> {
-    const {
-      title,
-      description,
-      price,
-      categories,
-      color,
-      stock,
-      status,
-    } = request.body;
+    const { title, description, price, categories, status } = request.body;
     const user_id = request.user.id;
 
     const createProduct = container.resolve(CreateProductService);
@@ -56,8 +48,6 @@ class ProductsAdminController {
       description,
       price,
       categories,
-      color,
-      stock,
       status,
     });
 
@@ -65,15 +55,7 @@ class ProductsAdminController {
   }
 
   async update(request: Request, response: Response): Promise<Response> {
-    const {
-      title,
-      description,
-      price,
-      categories,
-      color,
-      stock,
-      status,
-    } = request.body;
+    const { title, description, price, categories, status } = request.body;
     const { product_id } = request.params;
     const user_id = request.user.id;
 
@@ -86,8 +68,6 @@ class ProductsAdminController {
       description,
       price,
       categories,
-      color,
-      stock,
       status,
     });
 
@@ -109,4 +89,4 @@ class ProductsAdminController {
   }
 }
 
-export default ProductsAdminController;
+export default ProductAdminController;

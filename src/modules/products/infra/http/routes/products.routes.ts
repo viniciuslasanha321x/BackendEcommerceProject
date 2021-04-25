@@ -2,11 +2,11 @@ import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
-import ProductsController from '../controllers/ProductsController';
+import ProductController from '../controllers/ProductController';
 
 const productsRouter = Router();
 
-const productController = new ProductsController();
+const productController = new ProductController();
 
 productsRouter.post(
   '/',
@@ -16,8 +16,6 @@ productsRouter.post(
       title: Joi.string().min(4).required(),
       price: Joi.number().min(5).required(),
       description: Joi.string().min(20).required(),
-      color: Joi.string().min(3).required(),
-      stock: Joi.number().min(1).required(),
       status: Joi.boolean().default(false),
       categories: Joi.array().items(Joi.string()).required(),
     },
@@ -33,8 +31,6 @@ productsRouter.put(
       title: Joi.string().min(4).required(),
       price: Joi.number().min(5).required(),
       description: Joi.string().min(20).required(),
-      color: Joi.string().min(3).required(),
-      stock: Joi.number().min(1).required(),
       status: Joi.boolean().default(false),
       categories: Joi.array().items(Joi.string()).required(),
     },

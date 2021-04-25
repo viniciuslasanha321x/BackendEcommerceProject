@@ -4,7 +4,7 @@ import AppError from '@shared/error/AppError';
 import { classToClass } from 'class-transformer';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import IResponseProductDTO from '../dtos/IResponseProductDTO';
-import IProductRepository from '../repositories/IProductsRepository';
+import IProductRepository from '../repositories/IProductRepository';
 
 interface IRequest {
   search?: string;

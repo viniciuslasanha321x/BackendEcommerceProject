@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
-import IProductRepository from '@modules/products/repositories/IProductsRepository';
+import IProductRepository from '@modules/products/repositories/IProductRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/error/AppError';
 import Order from '../infra/typeorm/entities/Order';
@@ -9,11 +9,11 @@ import IOrderRepository from '../repositories/IOrderRepository';
 
 interface IRequest {
   user_id: string;
-  product_id: string;
+  variant_id: string;
 }
 
 @injectable()
-class RemoveOrderProductService {
+class DecrementOrderProductService {
   constructor(
     @inject('ProductRepository')
     private productRepository: IProductRepository,
@@ -28,16 +28,27 @@ class RemoveOrderProductService {
     private orderProductRepository: IOrderProductRepository
   ) {}
 
-  async execute({ user_id, product_id }: IRequest): Promise<Order> {
+  async execute({ user_id, variant_id }: IRequest): Promise<Order> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError('User does not authenticated', 401);
     }
 
-    const product = await this.productRepository.findById(product_id);
+    const product = await this.productRepository.findByVariantId({
+      variant_id,
+      admin: user.admin,
+    });
 
     if (!product) {
+      throw new AppError('Product does not exist');
+    }
+
+    const productVariant = product.variants.find(
+      (variant) => variant.id === variant_id
+    );
+
+    if (!productVariant) {
       throw new AppError('Product does not exist');
     }
 
@@ -48,7 +59,7 @@ class RemoveOrderProductService {
     }
 
     const orderProduct = order.items.find(
-      (item) => item.product_id === product.id
+      (item) => item.variant_id === variant_id
     );
 
     if (!orderProduct) {
@@ -61,7 +72,7 @@ class RemoveOrderProductService {
       await this.orderProductRepository.save(orderProduct);
 
       order.items = order.items.filter((item) => {
-        if (item.product_id === product_id) {
+        if (item.variant_id === variant_id) {
           return orderProduct;
         }
         return item;
@@ -69,9 +80,7 @@ class RemoveOrderProductService {
     } else {
       await this.orderProductRepository.remove(orderProduct);
 
-      order.items = order.items.filter(
-        (item) => item.product_id !== product.id
-      );
+      order.items = [];
     }
 
     order.total = Number(
@@ -86,4 +95,4 @@ class RemoveOrderProductService {
   }
 }
 
-export default RemoveOrderProductService;
+export default DecrementOrderProductService;

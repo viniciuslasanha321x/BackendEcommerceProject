@@ -1,17 +1,17 @@
 import { container } from 'tsyringe';
-import ProductImageRepository from '../infra/typeorm/repositories/ProductImageRepository';
 
 import ProductRepository from '../infra/typeorm/repositories/ProductRepository';
-import IProductImageRepository from '../repositories/IProductsImagesRepository';
+import ProductVariantRepository from '../infra/typeorm/repositories/ProductVariantRepository';
 
-import IProductRepository from '../repositories/IProductsRepository';
+import IProductRepository from '../repositories/IProductRepository';
+import IProductVariantRepository from '../repositories/IProductVariantRepository';
 
 container.registerSingleton<IProductRepository>(
   'ProductRepository',
   ProductRepository
 );
 
-container.registerSingleton<IProductImageRepository>(
-  'ProductImageRepository',
-  ProductImageRepository
+container.registerSingleton<IProductVariantRepository>(
+  'ProductVariantRepository',
+  ProductVariantRepository
 );

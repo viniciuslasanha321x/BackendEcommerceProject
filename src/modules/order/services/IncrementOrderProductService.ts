@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 
-import IProductRepository from '@modules/products/repositories/IProductsRepository';
+import IProductRepository from '@modules/products/repositories/IProductRepository';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/error/AppError';
 import Order from '../infra/typeorm/entities/Order';
@@ -9,11 +9,11 @@ import IOrderRepository from '../repositories/IOrderRepository';
 
 interface IRequest {
   user_id: string;
-  product_id: string;
+  variant_id: string;
 }
 
 @injectable()
-class AddOrderProductService {
+class IncrementOrderProductService {
   constructor(
     @inject('ProductRepository')
     private productRepository: IProductRepository,
@@ -28,16 +28,27 @@ class AddOrderProductService {
     private orderProductRepository: IOrderProductRepository
   ) {}
 
-  async execute({ user_id, product_id }: IRequest): Promise<Order> {
+  async execute({ user_id, variant_id }: IRequest): Promise<Order> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
       throw new AppError('User does not authenticated', 401);
     }
 
-    const product = await this.productRepository.findById(product_id);
+    const product = await this.productRepository.findByVariantId({
+      variant_id,
+      admin: user.admin,
+    });
 
     if (!product) {
+      throw new AppError('Product does not exist');
+    }
+
+    const productVariant = product.variants.find(
+      (variant) => variant.id === variant_id
+    );
+
+    if (!productVariant) {
       throw new AppError('Product does not exist');
     }
 
@@ -45,24 +56,24 @@ class AddOrderProductService {
 
     const stockVerify = (qtd: number, stock: number): void => {
       if (qtd >= stock) {
-        throw new AppError('Stock does not disponible');
+        throw new AppError('Stock does not available');
       }
     };
 
     if (order) {
       let orderItem = order.items.find(
-        (item) => item.product_id === product.id
+        (item) => item.variant_id === variant_id
       );
 
       if (orderItem) {
-        stockVerify(Number(orderItem.qtd), product.stock);
+        stockVerify(Number(orderItem.qtd), Number(productVariant.stock));
         orderItem.qtd = Number(orderItem.qtd) + 1;
         orderItem = await this.orderProductRepository.save(orderItem);
       } else {
-        stockVerify(1, product.stock);
+        stockVerify(1, Number(productVariant.stock));
         orderItem = await this.orderProductRepository.create({
           order_id: order.id,
-          product_id: product.id,
+          variant: productVariant,
           price: product.price,
           qtd: 1,
         });
@@ -81,13 +92,13 @@ class AddOrderProductService {
       return this.orderRepository.save(order);
     }
 
-    stockVerify(1, product.stock);
+    stockVerify(1, Number(productVariant.stock));
 
     const newOrder = await this.orderRepository.create({ user_id });
 
     const orderItem = await this.orderProductRepository.create({
       order_id: newOrder.id,
-      product_id: product.id,
+      variant: productVariant,
       price: product.price,
       qtd: 1,
     });
@@ -100,4 +111,4 @@ class AddOrderProductService {
   }
 }
 
-export default AddOrderProductService;
+export default IncrementOrderProductService;

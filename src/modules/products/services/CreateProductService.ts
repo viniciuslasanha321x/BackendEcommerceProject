@@ -3,16 +3,14 @@ import IUsersRepository from '@modules/users/repositories/IUsersRepository';
 import AppError from '@shared/error/AppError';
 import { inject, injectable } from 'tsyringe';
 import Product from '../infra/typeorm/entities/Product';
-import IProductRepository from '../repositories/IProductsRepository';
+import IProductRepository from '../repositories/IProductRepository';
 
 interface IRequest {
   user_id: string;
   title: string;
   price: number;
   description: string;
-  stock: number;
   categories: Array<string>;
-  color: string;
   status: boolean;
 }
 
@@ -34,9 +32,7 @@ class CreateProductService {
     title,
     price,
     description,
-    stock,
     categories,
-    color,
     status,
   }: IRequest): Promise<Product> {
     const user = await this.usersRepository.findById(user_id);
@@ -55,8 +51,6 @@ class CreateProductService {
       title,
       price,
       description,
-      stock,
-      color,
       categories: categoriesFind,
       status,
     });

@@ -6,12 +6,13 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { v4 as uuid } from 'uuid';
 
 import Category from '@modules/categories/infra/typeorm/entities/Category';
-import Image from './Images';
+import ProductVariant from './ProductVariant';
 
 @Entity('products')
 class Product {
@@ -21,20 +22,14 @@ class Product {
   @Column()
   title: string;
 
-  @Column('decimal', { precision: 5, scale: 2 })
-  price: number;
-
   @Column()
   description: string;
 
   @Column()
-  color: string;
+  price: number;
 
   @Column()
   status: boolean;
-
-  @Column()
-  stock: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -50,13 +45,8 @@ class Product {
   })
   categories: Category[];
 
-  @ManyToMany(() => Image, (image) => image.products)
-  @JoinTable({
-    name: 'products_images',
-    joinColumns: [{ name: 'product_id' }],
-    inverseJoinColumns: [{ name: 'image_id' }],
-  })
-  images: Image[];
+  @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
+  variants: ProductVariant[];
 
   constructor() {
     if (!this.id) {

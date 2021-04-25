@@ -3,7 +3,7 @@ import AppError from '@shared/error/AppError';
 import { classToClass } from 'class-transformer';
 import { inject, injectable } from 'tsyringe';
 import Product from '../infra/typeorm/entities/Product';
-import IProductRepository from '../repositories/IProductsRepository';
+import IProductRepository from '../repositories/IProductRepository';
 
 interface IRequest {
   product_id: string;

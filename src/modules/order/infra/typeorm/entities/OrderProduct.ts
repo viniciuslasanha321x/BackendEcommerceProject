@@ -9,10 +9,10 @@ import {
 } from 'typeorm';
 
 import { v4 as uuid } from 'uuid';
-import Product from '@modules/products/infra/typeorm/entities/Product';
+import ProductVariant from '@modules/products/infra/typeorm/entities/ProductVariant';
 import Order from './Order';
 
-@Entity('order_product')
+@Entity('order_products_variants')
 class OrderProduct {
   @PrimaryColumn('uuid')
   readonly id: string;
@@ -20,22 +20,11 @@ class OrderProduct {
   @Column('uuid')
   order_id: string;
 
-  @ManyToOne(() => Order, (order) => order.items)
-  @JoinColumn({ name: 'order_id' })
-  order: Order;
-
   @Column('uuid')
-  product_id: string;
-
-  @ManyToOne(() => Product)
-  @JoinColumn({ name: 'product_id' })
-  product: Product;
+  variant_id: string;
 
   @Column()
   price: number;
-
-  @Column()
-  color: string;
 
   @Column()
   qtd: number;
@@ -45,6 +34,14 @@ class OrderProduct {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => Order, (order) => order.items)
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
+
+  @ManyToOne(() => ProductVariant)
+  @JoinColumn({ name: 'variant_id' })
+  variant: ProductVariant;
 
   constructor() {
     if (!this.id) {
