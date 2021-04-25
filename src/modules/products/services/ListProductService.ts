@@ -8,6 +8,7 @@ import IProductRepository from '../repositories/IProductsRepository';
 
 interface IRequest {
   search?: string;
+  category_id?: string;
   page?: number;
   limit?: number;
   user_id?: string;
@@ -25,6 +26,7 @@ class ListProductService {
 
   async execute({
     search,
+    category_id,
     page,
     limit,
     user_id,
@@ -35,6 +37,7 @@ class ListProductService {
 
     const products = await this.productRepository.findAll({
       search,
+      category_id,
       page,
       limit,
       admin: user ? user.admin : false,

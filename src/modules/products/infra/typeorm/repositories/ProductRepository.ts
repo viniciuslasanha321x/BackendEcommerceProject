@@ -1,6 +1,6 @@
 import ICreateProductsDTO from '@modules/products/dtos/ICreateProductsDTO';
+import IFindAllProductsDTO from '@modules/products/dtos/IFindAllProductsDTO';
 import IFindProductDTO from '@modules/products/dtos/IFindProductDTO';
-import IFindAllProductDTO from '@modules/products/dtos/IFindAllProductDTO';
 import IResponseProductDTO from '@modules/products/dtos/IResponseProductDTO';
 import IProductRepository from '@modules/products/repositories/IProductsRepository';
 import { getRepository, ILike, Repository } from 'typeorm';
@@ -32,36 +32,43 @@ class ProductRepository implements IProductRepository {
     });
   }
 
+  async remove(product: Product): Promise<void> {
+    await this.ormRepository.remove(product);
+  }
+
   async findAll({
-    search,
+    category_id,
     page = 1,
     limit = 8,
     admin = false,
-  }: IFindAllProductDTO): Promise<IResponseProductDTO | undefined> {
-    const products = await this.ormRepository.findAndCount({
-      relations: ['categories', 'images'],
-      where: {
-        ...(search ? { title: ILike(`%${search}%`) } : {}),
+    search,
+  }: IFindAllProductsDTO): Promise<IResponseProductDTO | undefined> {
+    let query = this.ormRepository
+      .createQueryBuilder('products')
+      .leftJoinAndSelect('products.categories', 'categories')
+      .leftJoinAndSelect('products.images', 'images')
+      .where({
+        title: ILike(`%${search}%`),
         ...(!admin ? { status: true } : {}),
-      },
-      order: {
-        updated_at: 'DESC',
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+      })
+      .take(limit)
+      .skip(page - 1);
+
+    if (category_id) {
+      query = query.andWhere('categories.id = :categoryId', {
+        categoryId: category_id,
+      });
+    }
+
+    const result = await query.getManyAndCount();
 
     return {
-      products: products[0],
+      products: result[0],
       pages: {
         page,
-        of: Math.ceil(products[1] / limit),
+        of: Math.ceil(result[1] / limit),
       },
     };
-  }
-
-  async remove(product: Product): Promise<void> {
-    await this.ormRepository.remove(product);
   }
 }
 

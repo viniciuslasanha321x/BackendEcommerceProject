@@ -10,7 +10,7 @@ import DeleteProductService from '@modules/products/services/DeleteProductServic
 class ProductsAdminController {
   async show(request: Request, response: Response): Promise<Response> {
     const { product_id } = request.body;
-    const user_id = request.user.id;
+    const user_id = request.user ? request.user.id : undefined;
 
     const showProduct = container.resolve(showProductService);
 
@@ -20,12 +20,18 @@ class ProductsAdminController {
   }
 
   async index(request: Request, response: Response): Promise<Response> {
-    const { search, page, limit } = request.body;
-    const user_id = request.user.id;
+    const { search, category_id, page, limit } = request.body;
+    const user_id = request.user ? request.user.id : undefined;
 
     const listProduct = container.resolve(ListProductService);
 
-    const user = await listProduct.execute({ search, page, limit, user_id });
+    const user = await listProduct.execute({
+      search,
+      category_id,
+      page,
+      limit,
+      user_id,
+    });
 
     return response.json(user);
   }
