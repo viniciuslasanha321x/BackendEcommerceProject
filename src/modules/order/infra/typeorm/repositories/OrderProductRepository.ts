@@ -22,6 +22,10 @@ class OrderProductRepository implements IOrderProductRepository {
     return this.ormRepository.save(orderProduct);
   }
 
+  async findById(id: string): Promise<OrderProduct | undefined> {
+    return this.ormRepository.findOne({ id });
+  }
+
   async remove(orderProduct: OrderProduct): Promise<void> {
     await this.ormRepository.remove(orderProduct);
   }

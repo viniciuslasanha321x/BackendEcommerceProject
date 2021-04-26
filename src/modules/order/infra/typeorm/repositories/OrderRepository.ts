@@ -12,7 +12,7 @@ class OrderRepository implements IOrderRepository {
 
   findByUserId(user_id: string): Promise<Order | undefined> {
     return this.ormRepository.findOne({
-      relations: ['items', 'items.variant'],
+      relations: ['items', 'items.variant', 'items.variant.product'],
       where: { user_id, status: null },
     });
   }

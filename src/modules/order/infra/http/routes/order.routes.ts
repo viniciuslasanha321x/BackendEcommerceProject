@@ -20,6 +20,7 @@ orderRouter.post(
   }),
   orderController.increment
 );
+
 orderRouter.post(
   '/decrement',
   celebrate({
@@ -31,5 +32,15 @@ orderRouter.post(
 );
 
 orderRouter.get('/show', orderController.show);
+
+orderRouter.delete(
+  '/',
+  celebrate({
+    [Segments.BODY]: {
+      order_product_id: Joi.string().uuid().required(),
+    },
+  }),
+  orderController.delete
+);
 
 export default orderRouter;
