@@ -10,6 +10,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { v4 as uuid } from 'uuid';
 
 import Order from '@modules/order/infra/typeorm/entities/Order';
+import uploadConfig from '@config/upload';
 
 @Entity('users')
 class User {
@@ -45,7 +46,14 @@ class User {
   getUrl(): string | null {
     if (!this.avatar) return null;
 
-    return `http://localhost:3333/files/${this.avatar}`;
+    switch (uploadConfig.driver) {
+      case 'disk':
+        return `${process.env.API_BASE_URL}/files/${this.avatar}`;
+      case 's3':
+        return `https://${uploadConfig.aws.bucket}.s3.amazonaws.com/${this.avatar}`;
+      default:
+        return null;
+    }
   }
 
   constructor() {
