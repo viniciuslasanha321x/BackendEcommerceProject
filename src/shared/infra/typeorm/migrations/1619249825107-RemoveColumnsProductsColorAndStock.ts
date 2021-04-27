@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export default class RemoveColumnsProductsColorAndStock1619349825107
+export default class RemoveColumnsProductsColorAndStock1619249825107
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropColumns('products', [

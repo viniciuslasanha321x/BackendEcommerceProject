@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateTableUserForgotPassword1619476914063
+export default class CreateTableProductsVariants1619286486851
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users_tokens',
+        name: 'products_variants',
         columns: [
           {
             name: 'id',
@@ -13,17 +13,16 @@ export default class CreateTableUserForgotPassword1619476914063
             isPrimary: true,
           },
           {
-            name: 'user_id',
+            name: 'product_id',
             type: 'uuid',
           },
           {
-            name: 'token',
-            type: 'uuid',
+            name: 'color',
+            type: 'varchar',
           },
           {
-            name: 'is_valid',
-            type: 'boolean',
-            default: true,
+            name: 'stock',
+            type: 'numeric',
           },
           {
             name: 'created_at',
@@ -38,9 +37,9 @@ export default class CreateTableUserForgotPassword1619476914063
         ],
         foreignKeys: [
           {
-            name: 'fk_user_forgot',
-            referencedTableName: 'users',
-            columnNames: ['user_id'],
+            name: 'fk_products_variants',
+            columnNames: ['product_id'],
+            referencedTableName: 'products',
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
@@ -51,6 +50,6 @@ export default class CreateTableUserForgotPassword1619476914063
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users_tokens');
+    await queryRunner.dropTable('products_variants');
   }
 }
