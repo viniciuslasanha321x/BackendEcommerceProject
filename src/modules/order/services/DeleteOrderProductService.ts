@@ -7,7 +7,7 @@ import IOrderRepository from '../repositories/IOrderRepository';
 
 interface IRequest {
   user_id: string;
-  order_product_id: string;
+  order_item_id: string;
 }
 
 @injectable()
@@ -23,7 +23,7 @@ class DeleteOrderProductService {
     private orderProductRepository: IOrderProductRepository
   ) {}
 
-  async execute({ user_id, order_product_id }: IRequest): Promise<void> {
+  async execute({ user_id, order_item_id }: IRequest): Promise<void> {
     const user = await this.usersRepository.findById(user_id);
 
     if (!user) {
@@ -36,9 +36,7 @@ class DeleteOrderProductService {
       throw new AppError('Order does not exist');
     }
 
-    const orderProduct = order.items.find(
-      (item) => item.id === order_product_id
-    );
+    const orderProduct = order.items.find((item) => item.id === order_item_id);
 
     if (!orderProduct) {
       throw new AppError('Order Product does not exist');

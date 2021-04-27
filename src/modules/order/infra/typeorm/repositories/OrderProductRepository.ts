@@ -29,12 +29,6 @@ class OrderProductRepository implements IOrderProductRepository {
   async remove(orderProduct: OrderProduct): Promise<void> {
     await this.ormRepository.remove(orderProduct);
   }
-
-  async findAll(): Promise<OrderProduct[]> {
-    return this.ormRepository.find({
-      relations: ['product', 'product.images'],
-    });
-  }
 }
 
 export default OrderProductRepository;

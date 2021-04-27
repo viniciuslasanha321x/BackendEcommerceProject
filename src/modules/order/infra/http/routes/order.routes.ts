@@ -37,7 +37,7 @@ orderRouter.delete(
   '/',
   celebrate({
     [Segments.BODY]: {
-      order_product_id: Joi.string().uuid().required(),
+      order_item_id: Joi.string().uuid().required(),
     },
   }),
   orderController.delete

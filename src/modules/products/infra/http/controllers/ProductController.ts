@@ -14,18 +14,18 @@ class ProductAdminController {
 
     const showProduct = container.resolve(showProductService);
 
-    const user = await showProduct.execute({ product_id, user_id });
+    const product = await showProduct.execute({ product_id, user_id });
 
-    return response.json(user);
+    return response.json(product);
   }
 
   async index(request: Request, response: Response): Promise<Response> {
     const { search, category_id, page, limit } = request.body;
     const user_id = request.user ? request.user.id : undefined;
 
-    const listProduct = container.resolve(ListProductService);
+    const listProducts = container.resolve(ListProductService);
 
-    const user = await listProduct.execute({
+    const products = await listProducts.execute({
       search,
       category_id,
       page,
@@ -33,7 +33,7 @@ class ProductAdminController {
       user_id,
     });
 
-    return response.json(user);
+    return response.json(products);
   }
 
   async create(request: Request, response: Response): Promise<Response> {
@@ -42,7 +42,7 @@ class ProductAdminController {
 
     const createProduct = container.resolve(CreateProductService);
 
-    const user = await createProduct.execute({
+    const product = await createProduct.execute({
       user_id,
       title,
       description,
@@ -51,7 +51,7 @@ class ProductAdminController {
       status,
     });
 
-    return response.status(201).json(user);
+    return response.status(201).json(product);
   }
 
   async update(request: Request, response: Response): Promise<Response> {
@@ -61,7 +61,7 @@ class ProductAdminController {
 
     const updateProduct = container.resolve(UpdateProductService);
 
-    const user = await updateProduct.execute({
+    const product = await updateProduct.execute({
       product_id,
       user_id,
       title,
@@ -71,7 +71,7 @@ class ProductAdminController {
       status,
     });
 
-    return response.status(201).json(user);
+    return response.status(201).json(product);
   }
 
   async delete(request: Request, response: Response): Promise<Response> {

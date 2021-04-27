@@ -46,7 +46,7 @@ class ProductRepository implements IProductRepository {
     admin,
   }: IFindProductDTO): Promise<Product | undefined> {
     return this.ormRepository.findOne({
-      relations: ['categories', 'variants'],
+      relations: ['categories', 'variants', 'variants.images'],
       where: { id: product_id, ...(!admin ? { status: true } : {}) },
     });
   }
@@ -66,8 +66,10 @@ class ProductRepository implements IProductRepository {
       .createQueryBuilder('products')
       .leftJoinAndSelect('products.categories', 'categories')
       .leftJoinAndSelect('products.variants', 'variants')
+      .leftJoinAndSelect('variants.images', 'images')
+      .orderBy('products.updated_at', 'DESC')
       .where({
-        title: ILike(`%${search}%`),
+        ...(search ? { title: ILike(`%${search}%`) } : {}),
         ...(!admin ? { status: true } : {}),
       })
       .take(limit)

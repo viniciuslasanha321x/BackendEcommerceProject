@@ -46,7 +46,7 @@ class Product {
   categories: Category[];
 
   @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
-  variants: ProductVariant[];
+  variants?: ProductVariant[];
 
   constructor() {
     if (!this.id) {

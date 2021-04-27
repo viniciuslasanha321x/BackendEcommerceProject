@@ -14,8 +14,8 @@ export default {
 
   defaults: {
     from: {
-      email: 'admin@email.com',
-      name: 'Portfólio',
+      email: 'equepe@hedtmoveis.com',
+      name: 'HEDT',
     },
   },
 } as IMailConfig;

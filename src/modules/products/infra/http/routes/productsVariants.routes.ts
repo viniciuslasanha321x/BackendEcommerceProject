@@ -21,4 +21,15 @@ productsVariantsRouter.post(
   productVariantController.create
 );
 
+productsVariantsRouter.delete(
+  '/',
+  ensureAuthenticated,
+  celebrate({
+    [Segments.BODY]: {
+      variant_id: Joi.string().uuid().required(),
+    },
+  }),
+  productVariantController.delete
+);
+
 export default productsVariantsRouter;

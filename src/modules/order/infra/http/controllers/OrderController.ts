@@ -20,14 +20,14 @@ class OrderController {
   }
 
   async delete(request: Request, response: Response): Promise<Response> {
-    const { order_product_id } = request.body;
+    const { order_item_id } = request.body;
     const user_id = request.user.id;
 
     const deleteOrderProduct = container.resolve(DeleteOrderProductService);
 
     await deleteOrderProduct.execute({
       user_id,
-      order_product_id,
+      order_item_id,
     });
 
     return response.status(204).send();

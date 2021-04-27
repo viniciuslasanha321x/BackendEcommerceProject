@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import Product from './Product';
+import ProductVariantImage from './ProductVariantImage';
 
 @Entity('products_variants')
 class ProductVariant {
@@ -24,9 +26,6 @@ class ProductVariant {
   @Column()
   color: string;
 
-  @Column({ nullable: true })
-  image: string;
-
   @CreateDateColumn()
   created_at: Date;
 
@@ -36,6 +35,9 @@ class ProductVariant {
   @ManyToOne(() => Product, (product) => product.variants)
   @JoinColumn({ name: 'product_id' })
   product: Product;
+
+  @OneToMany(() => ProductVariantImage, (variantImage) => variantImage.variant)
+  images: ProductVariantImage[];
 
   constructor() {
     if (!this.id) {

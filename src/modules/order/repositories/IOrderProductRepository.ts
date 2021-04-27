@@ -5,6 +5,5 @@ export default interface IOrderProductRepository {
   create(data: ICreateOrderProductDTO): Promise<OrderProduct>;
   save(orderProduct: OrderProduct): Promise<OrderProduct>;
   findById(id: string): Promise<OrderProduct | undefined>;
-  findAll(): Promise<OrderProduct[]>;
   remove(orderProduct: OrderProduct): Promise<void>;
 }

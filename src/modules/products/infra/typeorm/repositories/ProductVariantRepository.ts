@@ -11,7 +11,10 @@ class ProductVariantRepository implements IProductVariantRepository {
   }
 
   async findById(variant_id: string): Promise<ProductVariant | undefined> {
-    return this.ormRepository.findOne({ id: variant_id });
+    return this.ormRepository.findOne({
+      where: { id: variant_id },
+      relations: ['images'],
+    });
   }
 
   async save(data: ProductVariant): Promise<ProductVariant> {

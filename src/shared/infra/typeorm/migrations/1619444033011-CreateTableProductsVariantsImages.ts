@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateTableProductsVariants1619350019188
+export default class CreateTableProductsVariantsImages1619444033011
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'products_variants',
+        name: 'products_variants_images',
         columns: [
           {
             name: 'id',
@@ -13,16 +13,12 @@ export default class CreateTableProductsVariants1619350019188
             isPrimary: true,
           },
           {
-            name: 'product_id',
+            name: 'variant_id',
             type: 'uuid',
           },
           {
-            name: 'color',
+            name: 'filename',
             type: 'varchar',
-          },
-          {
-            name: 'stock',
-            type: 'numeric',
           },
           {
             name: 'created_at',
@@ -37,9 +33,9 @@ export default class CreateTableProductsVariants1619350019188
         ],
         foreignKeys: [
           {
-            name: 'fk_products_variants',
-            columnNames: ['product_id'],
-            referencedTableName: 'products',
+            name: 'fk_images_variant',
+            columnNames: ['variant_id'],
+            referencedTableName: 'products_variants',
             referencedColumnNames: ['id'],
             onDelete: 'CASCADE',
             onUpdate: 'CASCADE',
@@ -50,6 +46,6 @@ export default class CreateTableProductsVariants1619350019188
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('products_variants');
+    await queryRunner.dropTable('products_variants_images');
   }
 }

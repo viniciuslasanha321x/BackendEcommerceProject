@@ -44,7 +44,7 @@ class IncrementOrderProductService {
       throw new AppError('Product does not exist');
     }
 
-    const productVariant = product.variants.find(
+    const productVariant = product.variants?.find(
       (variant) => variant.id === variant_id
     );
 
@@ -78,6 +78,10 @@ class IncrementOrderProductService {
           qtd: 1,
         });
 
+        delete product.variants;
+
+        orderItem.variant.product = product;
+
         order.items = [...order.items, orderItem];
       }
 
@@ -92,9 +96,9 @@ class IncrementOrderProductService {
       return this.orderRepository.save(order);
     }
 
-    stockVerify(1, Number(productVariant.stock));
-
     const newOrder = await this.orderRepository.create({ user_id });
+
+    stockVerify(1, Number(productVariant.stock));
 
     const orderItem = await this.orderProductRepository.create({
       order_id: newOrder.id,
